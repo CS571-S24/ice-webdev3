@@ -37,18 +37,16 @@ const TicketBoard = (props) => {
         }
 
         setTicketLanes(oldLanes => {
-            let fromLane = oldLanes[from].slice(); // shallow copy
-            let toLane = oldLanes[to].slice(); // shallow copy
-            
-            const ticketToMove = fromLane.filter(tick => tick.id === tickId)[0]
-            fromLane = fromLane.filter(tick => tick.id !== tickId);
-            toLane = [...toLane, ticketToMove];
+            // Be sure NOT to change oldLanes directly!
+            let fromLane = oldLanes[from]; // this is just a reference copy! be sure not to change it!
+            let toLane = oldLanes[to]; // this is just a reference copy! be sure not to change it!
+            const ticketToMove = fromLane.find(tick => tick.id === tickId);
 
-            return {
-                ...oldLanes,
-                [from]: fromLane,
-                [to]: toLane
-            }
+            const newLanes = {...oldLanes};
+            newLanes[from] = fromLane.filter(tick => tick.id !== tickId); // remove ticket from old lane...
+            newLanes[to] = [...toLane, ticketToMove]; // and place it in the new lane!
+
+            return newLanes;
         })
     }
 
